@@ -89,3 +89,85 @@ export default class extends Controller {
 ```
 
 When the controller connects to the dom, it starts listening for the trix-change event, which is fired after a change occurs in a trix editor. We make sure that the change is from our controller’s editor, and then we’ll scan through the text to look for the emoji shortcodes.
+
+## Find those Short Codes :smiley:
+
+Inside the trixChange function, we’ll go through every character of the editor’s text, and we’ll see if we find a short code. Then, if we find a short code, we’ll see if we have the short code to emoji mapping. Then we’ll replace the text, and stop, because replacing the text is going to create another change event, so we’ll look again later.
+
+Let’s add a small set of supported emojis to our controller, by creating a dictionary in our connect method:
+
+```
+  connect() {
+    window.addEventListener("trix-change", this.trixChange.bind(this))
+    this.supportedEmojis = {
+      ":smiley:" : "😀",
+      ":stuck_out_tongue_winking_eye:" : "😜",
+      ":bowtie:" : "🤵",
+    }
+  }
+```
+
+Then in the change method, we’ll process each change and look for a short code.
+```
+  trixChange(event) {
+    if (event.target == this.editorTarget) {
+```
+
+We’re going to get the text of the document from our editor:
+```
+      let stringDoc = this.editorTarget.editor.getDocument().toString()
+```
+
+We’ll set up some variables to keep track of what we’ve found as we go over the string:
+```
+      var foundItem = false
+      var foundStart = -1
+      var foundText = ""
+
+      // Instead iterating over every 16 bit unicode character, 
+      // since for (var letter of stringDoc) method won't work. 
+      // Trix isn't accounting for emojis peculiar unicode syntax
+      for (var count = 0; count<stringDoc.length; count++) {
+```
+We’ll look at every letter, and check to see if it’s a colon (:) character:
+```
+        let letter = stringDoc[count];
+        if (letter == ":") {
+          if (foundItem) {
+            foundText += letter
+```
+
+If we found a supported emoji, we’ll replace the shortcode. Otherwise, we’ll ignore it, and keep looking. We also keep track of a new colon character, and any text we find between colons.
+```
+            let emoji = this.supportedEmojis[foundText]
+            if (emoji) {
+              this.editorTarget.editor.setSelectedRange([foundStart, count + 1])
+              this.editorTarget.editor.insertString(emoji)
+              return // break out and wait for next trix-change event
+            } else {
+              foundItem = false
+              foundStart = -1
+              foundText = ""
+            }
+          } else {
+            foundItem = true
+            foundStart = count
+            foundText = letter
+          }
+        } else if (foundItem) {
+          // If we come across a space, it's not a supported emoji, so reset
+          if (letter == " ") {
+            foundItem = false
+            foundStart = -1
+            foundText = ""
+          } else {
+            foundText += letter
+          }
+        }
+      }
+    }
+  }
+```
+
+And now Trix will convert short codes into Emjoi!
+
