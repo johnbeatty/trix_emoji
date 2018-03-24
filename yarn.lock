@@ -5601,6 +5601,10 @@ trim-right@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/trim-right/-/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
 
+trix@^0.11.2:
+  version "0.11.2"
+  resolved "https://registry.yarnpkg.com/trix/-/trix-0.11.2.tgz#6e8c322ffbb6b377978af41b114135eb3b3b70f0"
+
 "true-case-path@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/true-case-path/-/true-case-path-1.0.2.tgz#7ec91130924766c7f573be3020c34f8fdfd00d62"
