@@ -11,9 +11,7 @@ export default class extends Controller {
     }
   }
 
-  trixChange(event) {
-    console.log("trix-change")
-
+  convert() {
     let stringDoc = this.editorTarget.editor.getDocument().toString()
 
     var foundItem = false
