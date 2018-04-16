@@ -1,8 +1,6 @@
 import { Controller } from "stimulus"
 
 export default class extends Controller {
-  static targets = ["editor"]
-
   connect() {
     this.supportedEmojis = {
       ":smiley:" : "😀",
@@ -12,7 +10,7 @@ export default class extends Controller {
   }
 
   convert() {
-    let stringDoc = this.editorTarget.editor.getDocument().toString()
+    let stringDoc = this.element.editor.getDocument().toString()
 
     var foundItem = false
     var foundStart = -1
@@ -30,8 +28,8 @@ export default class extends Controller {
 
           let emoji = this.supportedEmojis[foundText]
           if (emoji) {
-            this.editorTarget.editor.setSelectedRange([foundStart, count + 1])
-            this.editorTarget.editor.insertString(emoji)
+            this.element.editor.setSelectedRange([foundStart, count + 1])
+            this.element.editor.insertString(emoji)
             return // break out and wait for next 'trix-change' event
           } else {
             foundItem = false
